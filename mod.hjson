@@ -1,17 +1,17 @@
 #the mod name as displayed in-game
-displayName: "Java Mod Template"
+displayName: "Mechanical Warfare: Revisited"
 
 #the internal name of your mod
-name: "example-java-mod"
+name: "mechanical-warfare-revisit"
 
 #your name
-author: "You"
+author: "Port creator: RouterXdd/R.O.T. \nOG creators: JerichoFletcher and GlennFolker"
 
 #the fully qualified main class of the mod
-main: "example.ExampleJavaMod"
+main: "mvr.MVRMod"
 
 #the mod description as seen in the mod dialog
-description: "A Mindustry Java mod template."
+description: "Unofficial port of mod Mechanical Warfare"
 
 #the mod version
 version: 1.0
