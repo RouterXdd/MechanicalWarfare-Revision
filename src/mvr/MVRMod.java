@@ -30,7 +30,7 @@ public class MVRMod extends Mod{
     public void loadContent(){
         MVStatuses.load();
         MVSounds.load();
-        MVItems.load();
+        MVRes.load();
         MVUnitTypes.load();
         MVBlocks.load();
     }

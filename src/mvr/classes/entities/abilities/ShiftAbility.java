@@ -10,8 +10,8 @@ import static mindustry.Vars.*;
 
 public class ShiftAbility extends Ability {
         public float reload, chance;
-        public float minShift = -10;
-        public float maxShift = 10;
+        public float minShift = -20;
+        public float maxShift = 20;
         public float reloading = 0;
         public float shiftX;
         public float shiftY;

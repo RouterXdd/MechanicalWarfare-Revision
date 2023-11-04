@@ -1,4 +1,4 @@
-package mvr;
+package mvr.graphics;
 
 import arc.graphics.*;
 

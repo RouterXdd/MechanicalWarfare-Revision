@@ -5,9 +5,14 @@ import mindustry.*;
 
 public class MVSounds {
     public static Sound
-            heatrayActive;
+            heatrayActive,
+            voltmeterIdle,
+            voltmeterActive,
+            voltmeterShot;
     public static void load() {
         heatrayActive = Vars.tree.loadSound("heatrayActive");
-
+        voltmeterIdle = Vars.tree.loadSound("voltmeterIdle");
+        voltmeterActive = Vars.tree.loadSound("voltmeterActive");
+        voltmeterShot = Vars.tree.loadSound("voltmeterShot");
     }
 }
