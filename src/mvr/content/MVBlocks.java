@@ -12,8 +12,10 @@ import mindustry.world.blocks.defense.*;
 import mindustry.world.blocks.defense.turrets.*;
 import mindustry.world.blocks.environment.*;
 import mindustry.world.blocks.production.*;
+import mindustry.world.blocks.units.*;
 import mindustry.world.draw.*;
 import mindustry.world.meta.*;
+import mvr.classes.draw.BarDraw;
 import mvr.graphics.*;
 import mvr.classes.defence.turrets.*;
 
@@ -23,12 +25,16 @@ public class MVBlocks {
             //environment
             hillBlock, soil, obsidianRocks, obsidian, aluminumOre, ironOre, uraniumOre,
             //crafting
-            scrapCompactor, steelCrucible,
-            insulatingCompound,
+            scrapCompactor, steelCrucible, oilRefinery, chemicalStation,
+            insulatingCompound, APShellAssembler, HEShellAssembler,
+            //drills
+            chemicalDrill,
             //defence
             steelWall, steelWallLarge,
             //turrets
-            heatLasor, lobber, aegis, ghost, nighthawk, voltmeter;
+            heatLasor, lobber, aegis, ghost, nighthawk, voltmeter, quake,
+            //units
+            airAlter;
     public static void load(){
         soil = new Floor("soil"){{
             variants = 3;
@@ -93,6 +99,41 @@ public class MVBlocks {
             consumePower(1.25f);
             //research scrap-compactor
         }};
+        oilRefinery = new GenericCrafter("oil-refinery"){{
+            requirements(Category.crafting, with(Items.titanium, 80, Items.silicon, 70, Items.metaglass, 70, MVRes.steel, 60));
+
+            outputItem = new ItemStack(MVRes.sulfur, 1);
+            outputLiquid = new LiquidStack(MVRes.gas, 0.1f);
+            craftTime = 60f;
+            size = 2;
+            hasPower = true;
+            hasItems = true;
+
+            consumeLiquid(Liquids.oil, 0.2f);
+            consumePower(1.5f);
+            //research coal-centrifuge
+        }};
+        chemicalStation = new GenericCrafter("chemical-station"){{
+            requirements(Category.crafting, with(MVRes.iron, 80, MVRes.steel, 50, Items.silicon, 60, Items.metaglass, 60));
+            outputLiquid = new LiquidStack(MVRes.acid, 15f / 60f);
+            size = 4;
+            hasPower = true;
+            hasItems = true;
+            hasLiquids = true;
+            rotate = false;
+            solid = true;
+            outputsLiquid = true;
+            envEnabled = Env.any;
+            drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawLiquidTile(Liquids.water), new DrawLiquidTile(MVRes.acid){{drawLiquidLight = true;}}, new DrawDefault(), new DrawRegion("-top"));
+            liquidCapacity = 60f;
+            craftTime = 60;
+            lightLiquid = MVRes.acid;
+
+            consumePower(1f);
+            consumeItem(MVRes.sulfur, 1);
+            consumeLiquid(Liquids.water, 15f / 60f);
+            //research oil-refinery
+        }};
         insulatingCompound = new GenericCrafter("insulating-compound") {{
             requirements(Category.crafting, with(
                     Items.lead, 75,
@@ -122,6 +163,60 @@ public class MVBlocks {
             consumePower(4.5f);
             consumeItems(with(Items.plastanium, 2, Items.surgeAlloy, 1));
             //research steel-crucible
+        }};
+        APShellAssembler = new GenericCrafter("ap-shell-assembler"){{
+            requirements(Category.crafting, with(MVRes.iron, 120, Items.silicon, 75, Items.titanium, 80, MVRes.uranium, 40, Items.plastanium, 80));
+            craftEffect = Fx.producesmoke;
+            outputItem = new ItemStack(MVRes.apShell, 1);
+            craftTime = 60f;
+            size = 3;
+            hasPower = true;
+            itemCapacity = 20;
+            drawer = new DrawMulti(new DrawDefault(), new BarDraw(){{
+                y = -5;
+            }}, new DrawRegion("-top"));
+
+            consumePower(5f);
+            consumeItems(with(Items.blastCompound, 2, MVRes.uranium, 5, Items.coal, 4));
+            //research blast-mixer
+        }};
+        HEShellAssembler = new GenericCrafter("he-shell-assembler"){{
+            requirements(Category.crafting, with(MVRes.iron, 120, Items.silicon, 75, Items.titanium, 80, MVRes.uranium, 40, Items.plastanium, 80));
+            craftEffect = Fx.producesmoke;
+            outputItem = new ItemStack(MVRes.heShell, 1);
+            craftTime = 60f;
+            size = 3;
+            hasPower = true;
+            itemCapacity = 20;
+            drawer = new DrawMulti(new DrawDefault(), new BarDraw(){{
+                y = -5;
+            }}, new DrawRegion("-top"));
+
+            consumePower(5f);
+            consumeItems(with(Items.blastCompound, 5, MVRes.steel, 2, Items.coal, 4));
+            //research blast-mixer
+        }};
+        chemicalDrill = new Drill("chemical-drill"){{
+            requirements(Category.production, with(MVRes.iron, 50, MVRes.steel, 70, Items.silicon, 60, Items.metaglass, 50, Items.titanium, 80));
+            drillTime = 270;
+            size = 3;
+            drawRim = true;
+            hasPower = true;
+            tier = 6;
+            updateEffect = Fx.pulverizeMedium;
+            updateEffectChance = 0.03f;
+            drillEffect = Fx.mineBig;
+            rotateSpeed = 6f;
+            warmupSpeed = 0.01f;
+            itemCapacity = 14;
+            heatColor =  Color.valueOf("b5d772");
+
+            liquidBoostIntensity = 1.8f;
+
+            consumePower(2f);
+            consumeLiquid(MVRes.acid, 0.1f);
+            consumeLiquid(Liquids.cryofluid, 0.2f).boost();
+            //research blast-drill
         }};
         steelWall = new Wall("steel-wall"){{
             requirements(Category.defense, with(MVRes.steel, 6));
@@ -506,6 +601,75 @@ public class MVBlocks {
             consumePower(10f);
             coolant = consumeCoolant(0.4f);
             //research incandescence / heatLasor
+        }};
+        quake = new ItemTurret("quake"){{
+            requirements(Category.turret, with(MVRes.iron, 200, Items.graphite, 450, Items.plastanium, 250, Items.surgeAlloy, 250, MVRes.uranium, 300));
+            ammo(
+                    MVRes.heShell, new BasicBulletType(10f, 240){{
+                        lifetime = 40f;
+                        width = 17;
+                        height = 22f;
+                        ammoMultiplier = 2;
+                        backColor = MVPal.backColorHE;
+                        frontColor = MVPal.frontColorHE;
+                        //TODO effects
+                        hitEffect = despawnEffect = Fx.hitLancer;
+                        splashDamage = 500;
+                        splashDamageRadius = 40;
+                        knockback = 3;
+                        trailLength = 15;
+                        trailWidth = 3;
+                        trailColor = frontColor;
+                        hitSound = Sounds.boom;
+                    }},
+                    MVRes.apShell, new BasicBulletType(10f, 2210){{
+                        lifetime = 40f;
+                        width = 17;
+                        height = 22f;
+                        ammoMultiplier = 2;
+                        reloadMultiplier = 1.2f;
+                        backColor = MVPal.backColorAP;
+                        frontColor = MVPal.frontColorAP;
+                        //TODO effects
+                        hitEffect = despawnEffect = Fx.hitLancer;
+                        splashDamage = 120;
+                        splashDamageRadius = 10;
+                        pierce = true;
+                        pierceCap = 4;
+                        knockback = 6;
+                        trailLength = 15;
+                        trailWidth = 3;
+                        trailColor = frontColor;
+                        hitSound = Sounds.boom;
+                    }}
+            );
+            size = 4;
+            reload = 420f;
+            recoil = 6f;
+            range = 360f;
+            inaccuracy = 2f;
+            shootCone = 5f;
+            health = 2400;
+            rotateSpeed = 3;
+            shootSound = MVSounds.quakeShot;
+            coolant = consumeCoolant(0.8f);
+            //research ripple
+        }};
+        airAlter = new Reconstructor("fly-alter"){{
+            requirements(Category.units, with(Items.copper, 260, Items.lead, 170, Items.silicon, 120, MVRes.iron, 95, MVRes.aluminium, 70));
+
+            size = 3;
+            consumePower(4f);
+            consumeItems(with(Items.silicon, 52, MVRes.iron, 36, MVRes.steel, 20));
+
+            constructTime = 60f * 20f;
+
+            upgrades.addAll(
+                    new UnitType[]{UnitTypes.mono, MVUnitTypes.bullhead},
+                    new UnitType[]{UnitTypes.horizon, MVUnitTypes.phantasm},
+                    new UnitType[]{UnitTypes.flare, MVUnitTypes.serpent}
+            );
+            //research air-factlory
         }};
     }
 }

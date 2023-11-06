@@ -17,7 +17,7 @@ public class MVRes {
             hardness = 1;
             cost = 1f;
         }};
-        aluminium = new Item("aluminum", Color.valueOf("ff7f8a")){{
+        aluminium = new Item("aluminum", Color.valueOf("db4555")){{
             hardness = 4;
             cost = 2f;
         }};

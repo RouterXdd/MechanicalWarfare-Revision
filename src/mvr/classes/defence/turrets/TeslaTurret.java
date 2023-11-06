@@ -84,14 +84,15 @@ public class TeslaTurret extends PowerTurret {
                 Draw.reset();
             }
             if (heat >= 0.11){
+                Draw.alpha(heat);
                 Draw.mixcol(Pal.lancerLaser, 0.7f);
                 Draw.rect(flameRegion, tile.drawx(), tile.drawy(), 0);
                 Draw.mixcol();
                 Draw.reset();
             }
             if (heat >= 0.000001){
-                Draw.alpha(warmup());
-                Draw.mixcol(heatColor, 0.7f);
+                Draw.alpha(heat);
+                Draw.mixcol(heatColor, 0.8f);
                 Draw.rect(bottomHeatRegion, tile.drawx(), tile.drawy(), 0);
                 Draw.reset();
             }

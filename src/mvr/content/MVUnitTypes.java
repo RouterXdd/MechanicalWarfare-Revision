@@ -1,5 +1,6 @@
 package mvr.content;
 
+import arc.graphics.Color;
 import arc.struct.Seq;
 import mindustry.ai.*;
 import mindustry.content.*;
@@ -22,7 +23,9 @@ public class MVUnitTypes {
     //air heli
     serpent,
     //ground mech
-    sabre;
+    sabre,
+    //ground electro
+    mTron;
     public static void load(){
         bullhead = new UnitType("bullhead"){{
             controller = u -> new RevengeMinerAI(){{
@@ -35,11 +38,11 @@ public class MVUnitTypes {
             drag = 0.08f;
             accel = 0.14f;
             speed = 1.8f;
-            health = 180;
+            health = 240;
             engineSize = 1.8f;
             engineOffset = 6.4f;
             hitSize = 10;
-            range = 100f;
+            range = 60f;
             isEnemy = false;
             constructor = UnitEntity::create;
 
@@ -56,7 +59,7 @@ public class MVUnitTypes {
                 top = false;
                 inaccuracy = 2;
                 ejectEffect = Fx.casing1;
-                bullet = new BasicBulletType(3f, 6){{
+                bullet = new BasicBulletType(3f, 8){{
                     width = 6f;
                     height = 9f;
                     lifetime = 100 / 3f;
@@ -104,10 +107,9 @@ public class MVUnitTypes {
             health = 900;
             engineOffset = 5.2f;
             constructor = UnitEntity::create;
-            targetFlags = new BlockFlag[]{BlockFlag.factory, null};
             hitSize = 15;
             itemCapacity = 30;
-            abilities.add(new ShiftAbility(1.2f,0.95f));
+            abilities.add(new ShiftAbility(2f,1f));
 
             weapons.add(new Weapon("mechanical-warfare-revisit-phantasmal-gun-equip"){{
                 y = 0f;
@@ -238,6 +240,42 @@ public class MVUnitTypes {
                                 damage = 2;
                             }};
                         }};
+                }};
+            }});
+        }};
+        mTron  = new UnitType("m-tron"){{
+            speed = 0.31f;
+            hitSize = 19f;
+            rotateSpeed = 2f;
+            targetAir = false;
+            health = 1280;
+            armor = 12f;
+            mechFrontSway = 0.6f;
+            ammoType = new PowerAmmoType(1200);
+            constructor = MechUnit::create;
+
+            weapons.add(new Weapon("mechanical-warfare-revisit-m-rifle-equip"){{
+                top = false;
+                y = 1f;
+                x = 12f;
+                reload = 50f;
+                recoil = 4f;
+                shake = 2f;
+                shoot.shots = 3;
+                shoot.shotDelay = 2;
+                ejectEffect = Fx.casing3;
+                shootSound = Sounds.missile;
+                bullet = new BasicBulletType(3.5f, 32, "mechanical-warfare-revisit-energywave"){{
+                    hitEffect = Fx.blastExplosion;
+                    knockback = 0.8f;
+                    lifetime = 40f;
+                    width = 7f;
+                    height = 18f;
+                    pierce = true;
+                    pierceBuilding = true;
+                    pierceCap = 5;
+                    backColor = Color.valueOf("ddeeff");
+                    frontColor = Color.valueOf("aabbcc");
                 }};
             }});
         }};
