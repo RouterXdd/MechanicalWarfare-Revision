@@ -2,10 +2,13 @@ package mvr.classes.draw;
 
 import arc.Core;
 import arc.graphics.g2d.*;
+import arc.math.Mathf;
 import arc.util.Time;
+import arc.util.Tmp;
 import mindustry.Vars;
 import mindustry.entities.part.*;
 import mindustry.graphics.Drawf;
+import mindustry.type.UnitType;
 
 public class DrawRotor extends DrawPart {
     TextureRegion rotor;
@@ -13,18 +16,26 @@ public class DrawRotor extends DrawPart {
     public String rotorName;
     public float rotateSpeed;
     public float rotation = 0;
+    public int x, y = 0;
     public DrawRotor(String rotorName, float rotateSpeed){
         this.rotorName = rotorName;
         this.rotateSpeed = rotateSpeed;
     }
     @Override
     public void draw(PartParams params) {
+        int i = params.sideOverride == -1 ? 0 : params.sideOverride;
+        float sign = (i == 0 ? 1 : -1) * params.sideMultiplier;
+        Tmp.v1.set(x * sign, y).rotateRadExact((params.rotation - 90) * Mathf.degRad);
+        float
+                tx = params.x + Tmp.v1.x,
+                ty = params.y + Tmp.v1.y;
         if(!Vars.state.isPaused()) {
-            Drawf.spinSprite(rotor, params.x, params.y, rotation += Time.delta * rotateSpeed);
-            Draw.rect(rotorOutline, params.x, params.y, rotation += Time.delta * rotateSpeed);
+            rotation = Time.time * rotateSpeed;
+            Drawf.spinSprite(rotor, tx, ty, Time.time * rotateSpeed);
+            Draw.rect(rotorOutline, tx, ty, Time.time * rotateSpeed);
         }else{
-            Drawf.spinSprite(rotor, params.x, params.y, rotation);
-            Draw.rect(rotorOutline, params.x, params.y, rotation);
+            Drawf.spinSprite(rotor, tx, ty, rotation);
+            Draw.rect(rotorOutline, tx, ty, rotation);
         }
     }
 

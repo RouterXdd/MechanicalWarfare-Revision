@@ -15,6 +15,8 @@ import mindustry.world.blocks.production.*;
 import mindustry.world.blocks.units.*;
 import mindustry.world.draw.*;
 import mindustry.world.meta.*;
+import mvr.classes.defence.walls.InsulatorWall;
+import mvr.classes.defence.walls.MWWall;
 import mvr.classes.draw.BarDraw;
 import mvr.graphics.*;
 import mvr.classes.defence.turrets.*;
@@ -30,11 +32,11 @@ public class MVBlocks {
             //drills
             chemicalDrill,
             //defence
-            steelWall, steelWallLarge,
+            steelWall, steelWallLarge, reinforcedWall, reinforcedWallLarge, insulatorWall, insulatorWallLarge,
             //turrets
             heatLasor, lobber, aegis, ghost, nighthawk, voltmeter, quake,
             //units
-            airAlter;
+            airAlter, heliPlatform;
     public static void load(){
         soil = new Floor("soil"){{
             variants = 3;
@@ -189,7 +191,8 @@ public class MVBlocks {
             hasPower = true;
             itemCapacity = 20;
             drawer = new DrawMulti(new DrawDefault(), new BarDraw(){{
-                y = -5;
+                x = -5;
+                horizontal = true;
             }}, new DrawRegion("-top"));
 
             consumePower(5f);
@@ -229,6 +232,36 @@ public class MVBlocks {
             health = 560 * 4;
             size = 2;
             envDisabled |= Env.scorching;
+        }};
+        reinforcedWall = new MWWall("reinforced-wall"){{
+            requirements(Category.defense, with(MVRes.iron, 6, Items.surgeAlloy, 4, MVRes.uranium, 3, Items.phaseFabric, 1));
+            health = 1280;
+            envDisabled |= Env.scorching;
+            repairPower = 0.4f;
+            //research surge-wall
+        }};
+        reinforcedWallLarge = new MWWall("reinforced-wall-large"){{
+            requirements(Category.defense, with(MVRes.iron, 24, Items.surgeAlloy, 16, MVRes.uranium, 12, Items.phaseFabric, 4));
+            health = 1280 * 4;
+            envDisabled |= Env.scorching;
+            repairPower = 0.4f * 4;
+            size = 2;
+        }};
+        insulatorWall = new InsulatorWall("insulator-wall"){{
+            requirements(Category.defense, with(MVRes.insulatorAlloy, 6));
+            health = 1000;
+            absorbLasers = true;
+            envDisabled |= Env.scorching;
+            //research plastanium-wall
+        }};
+        insulatorWallLarge = new InsulatorWall("insulator-wall-large"){{
+            requirements(Category.defense, with(MVRes.insulatorAlloy, 6));
+            health = 1000 * 4;
+            size = 2;
+            absorbLasers = true;
+            envDisabled |= Env.scorching;
+            powerProduction = 4;
+            lightningMultiplier = 30;
         }};
         heatLasor = new TractorBeamTurret("incandescence"){{
             requirements(Category.turret, with(Items.lead, 160, Items.titanium, 120, Items.silicon, 120, MVRes.steel, 100));
@@ -562,7 +595,7 @@ public class MVBlocks {
         voltmeter = new TeslaTurret("voltmeter"){{
             requirements(Category.turret, with(Items.copper, 250, Items.lead, 225, MVRes.iron, 200, Items.silicon, 225, Items.surgeAlloy, 175));
             shootType = new LightningBulletType(){{
-                damage = 40;
+                damage = 50;
                 lightningLength = 25;
                 collidesAir = false;
                 ammoMultiplier = 1f;
@@ -666,10 +699,25 @@ public class MVBlocks {
 
             upgrades.addAll(
                     new UnitType[]{UnitTypes.mono, MVUnitTypes.bullhead},
-                    new UnitType[]{UnitTypes.horizon, MVUnitTypes.phantasm},
-                    new UnitType[]{UnitTypes.flare, MVUnitTypes.serpent}
+                    new UnitType[]{UnitTypes.flare, MVUnitTypes.apparition},
+                    new UnitType[]{UnitTypes.dagger, MVUnitTypes.serpent}
             );
             //research air-factlory
+        }};
+        heliPlatform = new Reconstructor("heli-platform"){{
+            requirements(Category.units, with(Items.surgeAlloy, 175, Items.lead, 175, Items.titanium, 325, Items.silicon, 300, MVRes.iron, 200));
+
+            size = 4;
+            consumePower(5.5f);
+            consumeItems(with(Items.silicon, 70, Items.titanium, 40, MVRes.steel, 35, Items.plastanium, 10));
+
+            constructTime = 60f * 60f;
+            squareSprite = false;
+
+            upgrades.addAll(
+                    new UnitType[]{MVUnitTypes.serpent, MVUnitTypes.viper}
+            );
+            //research air-alter
         }};
     }
 }

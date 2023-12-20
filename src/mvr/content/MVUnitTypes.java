@@ -10,8 +10,10 @@ import mindustry.type.*;
 import mindustry.type.ammo.*;
 import mindustry.world.meta.*;
 import mvr.classes.draw.DrawRotor;
+import mvr.classes.draw.HideDraw;
 import mvr.classes.entities.abilities.*;
 import mvr.classes.entities.ai.*;
+import mvr.classes.entities.units.HideUnitType;
 import mvr.graphics.MVPal;
 
 public class MVUnitTypes {
@@ -19,14 +21,21 @@ public class MVUnitTypes {
     //air miner
     bullhead, bulwark,
     //air shifter
-    phantasm,
+    apparition, phantasm,
     //air heli
-    serpent,
+    serpent, viper,
     //ground mech
-    sabre,
+    scrapper, rapier, sabre, dominator, nullifier,
     //ground electro
     mTron;
     public static void load(){
+        UnitTypes.pulsar.parts.add(new DrawRotor("rotor-blade-heal", 4.5f){{
+            y = -2;
+        }});
+        UnitTypes.oct.setEnginesMirror(
+                new UnitType.UnitEngine(120 / 4f, -110 / 4f, 6.5f, 310f)
+        );
+        UnitTypes.pulsar.engineSize = 0;
         bullhead = new UnitType("bullhead"){{
             controller = u -> new RevengeMinerAI(){{
                 mineItems = Seq.with(Items.copper, Items.lead, Items.titanium, MVRes.iron, MVRes.aluminium);
@@ -99,6 +108,39 @@ public class MVUnitTypes {
                 }};
             }});
         }};
+        apparition = new HideUnitType("apparition"){{
+            speed = 2.2f;
+            accel = 0.08f;
+            drag = 0.045f;
+            flying = true;
+            health = 280;
+            engineOffset = 6.35f;
+            targetFlags = new BlockFlag[]{BlockFlag.generator, null};
+            hitSize = 14;
+            itemCapacity = 12;
+            constructor = UnitEntity::create;
+            parts.add(new HideDraw());
+            weapons.add(new Weapon(){{
+                y = 1f;
+                x = 0f;
+                mirror = false;
+                reload = 30f;
+                ejectEffect = Fx.casing1;
+                bullet = new FlakBulletType(10f, 2){{
+                    collidesGround = true;
+                    width = 6f;
+                    height = 10f;
+                    shrinkX = shrinkY = 0.3f;
+                    lifetime = 5f;
+                    shootEffect = Fx.shootSmall;
+                    smokeEffect = Fx.shootSmallSmoke;
+                    hitEffect = Fx.flakExplosion;
+                    explodeRange = 8;
+                    sprite = "shell";
+                }};
+                shootSound = Sounds.shootBig;
+            }});
+        }};
         phantasm = new UnitType("phantasm"){{
             speed = 1.9f;
             accel = 0.08f;
@@ -135,7 +177,7 @@ public class MVUnitTypes {
             }});
         }};
         serpent = new UnitType("serpent"){{
-            speed = 1.2f;
+            speed = 1.6f;
             drag = 0.08f;
             flying = true;
             health = 900;
@@ -186,6 +228,92 @@ public class MVUnitTypes {
                             homingRange = 120;
                         }};
                         shootSound = Sounds.missile;
+                    }});
+        }};
+        viper = new UnitType("viper"){{
+            speed = 2.05f;
+            drag = 0.095f;
+            flying = true;
+            health = 1100;
+            engineOffset = 5.2f;
+            engineSize = 0;
+            constructor = UnitEntity::create;
+            hitSize = 18;
+            itemCapacity = 45;
+            parts.add(new DrawRotor("rotor-blade2", 5f){{
+                y = 14;
+            }},
+                    new DrawRotor("rotor-blade2", 3f){{
+                        y = -6;
+                    }}
+            );
+
+            weapons.add(new Weapon("mechanical-warfare-revisit-viper-machine-gun-equip"){{
+                            y = 20f;
+                            x = 4f;
+                            layerOffset = -1f;
+                            reload = 16f;
+                            alternate = true;
+                            recoil = 1.5f;
+                            inaccuracy = 3;
+                            ejectEffect = Fx.casing1;
+                            bullet = new BasicBulletType(6f, 12){{
+                                width = 6f;
+                                height = 9f;
+                                lifetime = 21f;
+                                shootEffect = Fx.shootBig;
+                                smokeEffect = Fx.shootBigSmoke;
+                                hitEffect = Fx.hitBulletSmall;
+                                frontColor = MVPal.frontColorCyan;
+                                backColor = MVPal.backColorCyan;
+                            }};
+                            shootSound = Sounds.shootBig;
+                        }},
+                    new Weapon("mechanical-warfare-revisit-viper-launcher-equip"){{
+                        y = 3.5f;
+                        x = 7f;
+                        reload = 60f;
+                        alternate = true;
+                        shootCone = 50;
+                        recoil = 2.3f;
+                        shoot.shots = 3;
+                        inaccuracy = 3;
+                        ejectEffect = Fx.casing3;
+                        bullet = new MissileBulletType(3.2f, 16){{
+                            width = 9f;
+                            height = 12f;
+                            lifetime = 55f;
+                            drag = -0.01f;
+                            shootEffect = Fx.shootBig;
+                            smokeEffect = Fx.shootBigSmoke;
+                            hitEffect = Fx.blastExplosion;
+                            frontColor = MVPal.frontColorCyan;
+                            backColor = trailColor = MVPal.backColorCyan;
+                            homingPower = 2;
+                            homingRange = 120;
+                        }};
+                        shootSound = Sounds.missile;
+                    }},
+                    new Weapon("mechanical-warfare-revisit-viper-lasergun-equip"){{
+                        y = 8f;
+                        x = 7f;
+                        reload = 90f;
+                        alternate = false;
+                        shootCone = 50;
+                        recoil = 2f;
+                        ejectEffect = Fx.none;
+                        bullet = new LaserBulletType(){{
+                            damage = 30f;
+                            recoil = 1f;
+                            lifetime = 25f;
+                            sideAngle = 45f;
+                            sideWidth = 1f;
+                            sideLength = 55f;
+                            collidesTeam = true;
+                            length = 100f;
+                            colors = new Color[]{MVPal.frontColorCyan.cpy().a(0.4f), MVPal.frontColorCyan, Color.white};
+                        }};
+                        shootSound = Sounds.shotgun;
                     }});
         }};
         sabre = new UnitType("sabre"){{
@@ -240,6 +368,41 @@ public class MVUnitTypes {
                                 damage = 2;
                             }};
                         }};
+                }};
+            }});
+        }};
+        nullifier = new UnitType("nullifier"){{
+            health = 18000f;
+            armor = 10;
+            speed = 0.2f;
+            hitSize = 27f;
+            rotateSpeed = 2f;
+            canDrown = false;
+            mechFrontSway = 1.9f;
+            mechStepParticles = true;
+            stepShake = 0.25f;
+            mechSideSway = 0.6f;
+            constructor = MechUnit::create;
+
+            weapons.add(new Weapon("mechanical-warfare-revisit-null-pointer-equip"){{
+                top = false;
+                x = 30.25f;
+                shootY = 21.5f;
+                rotate = false;
+                reload = 30f;
+                recoil = 5f;
+                shake = 2.2f;
+                inaccuracy = 2f;
+                shootSound = MVSounds.quakeShot;
+                bullet = new BasicBulletType(6f, 700f, "shell"){{
+                    lifetime = 75f;
+                    width = height = 14f;
+                    hitSize = 14f;
+                    knockback = 3f;
+                    backColor = Color.white;
+                    frontColor = Color.black;
+                    shootEffect = Fx.shootBig;
+                    smokeEffect = Fx.shootBigSmoke;
                 }};
             }});
         }};

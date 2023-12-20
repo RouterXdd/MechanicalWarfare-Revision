@@ -10,7 +10,7 @@ import static mindustry.content.StatusEffects.*;
 
 public class MVStatuses {
     public static StatusEffect
-            ultraMelting;
+            ultraMelting, detected;
     public static void load() {
         ultraMelting = new StatusEffect("meltingPlus"){{
             color = Color.valueOf("ffa166");
@@ -28,6 +28,9 @@ public class MVStatuses {
                     result.set(melting, Math.min(time + result.time, 200f));
                 });
             });
+        }};
+        detected = new StatusEffect("detected"){{
+            color = Color.gray;
         }};
     }
 }
