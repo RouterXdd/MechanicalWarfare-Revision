@@ -5,5 +5,5 @@ author: "Port creator: RouterXdd/R.O.T. \nOG creators: JerichoFletcher and Glenn
 main: "mvr.MVRMod"
 description: "Unofficial port of mod Mechanical Warfare"
 version: 1.5
-minGameVersion: 145
+minGameVersion: 146
 java: true
