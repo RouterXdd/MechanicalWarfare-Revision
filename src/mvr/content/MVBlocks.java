@@ -11,12 +11,13 @@ import mindustry.world.*;
 import mindustry.world.blocks.defense.*;
 import mindustry.world.blocks.defense.turrets.*;
 import mindustry.world.blocks.environment.*;
+import mindustry.world.blocks.power.ConsumeGenerator;
 import mindustry.world.blocks.production.*;
 import mindustry.world.blocks.units.*;
+import mindustry.world.consumers.*;
 import mindustry.world.draw.*;
 import mindustry.world.meta.*;
-import mvr.classes.defence.walls.InsulatorWall;
-import mvr.classes.defence.walls.MWWall;
+import mvr.classes.defence.walls.*;
 import mvr.classes.draw.BarDraw;
 import mvr.graphics.*;
 import mvr.classes.defence.turrets.*;
@@ -33,6 +34,8 @@ public class MVBlocks {
             insulatingCompound, APShellAssembler, HEShellAssembler,
             //drills
             chemicalDrill,
+            //power
+            liquidCombustionEngine,
             //defence
             steelWall, steelWallLarge, reinforcedWall, reinforcedWallLarge, insulatorWall, insulatorWallLarge,
             //turrets
@@ -243,6 +246,23 @@ public class MVBlocks {
             consumeLiquid(acid, 0.1f);
             consumeLiquid(Liquids.cryofluid, 0.2f).boost();
             //research blast-drill
+        }};
+        liquidCombustionEngine = new ConsumeGenerator("liquid-combustion-engine"){{
+            requirements(Category.power, with(titanium, 75, silicon, 50, iron, 50, metaglass, 25));
+            hasItems = false;
+            hasLiquids = true;
+            powerProduction = 3f;
+            itemDuration = 120f;
+            size = 2;
+
+            ambientSound = Sounds.smelter;
+            ambientSoundVolume = 0.03f;
+            generateEffect = Fx.redgeneratespark;
+
+            consumeLiquid(gas,0.05f);
+
+            drawer = new DrawMulti(new DrawDefault(), new DrawWarmupRegion(), new DrawLiquidRegion());
+            //research turbine-generator
         }};
         steelWall = new Wall("steel-wall"){{
             requirements(Category.defense, with(steel, 6));
