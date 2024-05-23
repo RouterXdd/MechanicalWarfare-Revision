@@ -1,23 +1,9 @@
-#the mod name as displayed in-game
-displayName: "Mechanical Warfare: Revisited"
-
-#the internal name of your mod
+displayName: "Forgotten Wartech"
+subtitle: "Mechanical Warfare v7 port"
 name: "mechanical-warfare-revisit"
-
-#your name
 author: "Port creator: RouterXdd/R.O.T. \nOG creators: JerichoFletcher and GlennFolker"
-
-#the fully qualified main class of the mod
 main: "mvr.MVRMod"
-
-#the mod description as seen in the mod dialog
 description: "Unofficial port of mod Mechanical Warfare"
-
-#the mod version
 version: 1.5
-
-#the minimum game build required to run this mod
 minGameVersion: 145
-
-#this is a java mod
 java: true

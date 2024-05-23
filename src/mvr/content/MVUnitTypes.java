@@ -6,6 +6,7 @@ import mindustry.ai.*;
 import mindustry.content.*;
 import mindustry.entities.bullet.*;
 import mindustry.gen.*;
+import mindustry.graphics.Pal;
 import mindustry.type.*;
 import mindustry.type.ammo.*;
 import mindustry.world.meta.*;
@@ -24,10 +25,12 @@ public class MVUnitTypes {
     apparition, phantasm,
     //air heli
     serpent, viper,
+        //support heli
+        bonker,
     //ground mech
     scrapper, rapier, sabre, dominator, nullifier,
     //ground electro
-    mTron;
+    mTron, anarchy;
     public static void load(){
         UnitTypes.pulsar.parts.add(new DrawRotor("rotor-blade-heal", 4.5f){{
             y = -2;
@@ -151,11 +154,11 @@ public class MVUnitTypes {
             constructor = UnitEntity::create;
             hitSize = 15;
             itemCapacity = 30;
-            abilities.add(new ShiftAbility(2f,1f));
+            abilities.add(new ShiftAbility(35f, 0.05f));
 
             weapons.add(new Weapon("mechanical-warfare-revisit-phantasmal-gun-equip"){{
-                y = 0f;
-                x = 4.5f;
+                y = 0.25f;
+                x = 4f;
                 reload = 20f;
                 top = false;
                 alternate = true;
@@ -316,6 +319,43 @@ public class MVUnitTypes {
                         shootSound = Sounds.shotgun;
                     }});
         }};
+        bonker = new UnitType("bonker"){{
+            speed = 2.3f;
+            drag = 0.08f;
+            flying = true;
+            health = 580;
+            engineOffset = 5.2f;
+            engineSize = 0;
+            constructor = UnitEntity::create;
+            hitSize = 11;
+            itemCapacity = 28;
+            parts.add(new DrawRotor("rotor-blade-heal", 8f){{
+                blur = true;
+            }});
+
+            weapons.add(new Weapon("mechanical-warfare-revisit-serpent-gun-equip"){{
+                            y = 1f;
+                            x = 2f;
+                            layerOffset = -1f;
+                            reload = 15f;
+                            alternate = true;
+                            recoil = 1.5f;
+                            inaccuracy = 5;
+                            ejectEffect = Fx.casing1;
+                            bullet = new LaserBoltBulletType(8f, 5){{
+                                width = 2f;
+                                height = 5.5f;
+                                backColor = frontColor = Pal.heal;
+                                lifetime = 10f;
+                                healPercent = 1f;
+                                shootEffect = Fx.shootSmall;
+                                smokeEffect = Fx.shootSmallSmoke;
+                                hitEffect = Fx.hitBulletSmall;
+                                collidesTeam = true;
+                            }};
+                            shootSound = Sounds.shootAlt;
+                        }});
+        }};
         sabre = new UnitType("sabre"){{
             speed = 0.5f;
             hitSize = 9f;
@@ -330,7 +370,7 @@ public class MVUnitTypes {
             weapons.add(new Weapon("mechanical-warfare-revisit-sabre-launcher-equip"){{
                 top = false;
                 y = 1f;
-                x = 7f;
+                x = 9f;
                 reload = 90f;
                 recoil = 3f;
                 shake = 2f;
@@ -439,6 +479,47 @@ public class MVUnitTypes {
                     pierceCap = 5;
                     backColor = Color.valueOf("ddeeff");
                     frontColor = Color.valueOf("aabbcc");
+                }};
+            }});
+        }};
+        anarchy  = new UnitType("anarchy"){{
+            speed = 0.16f;
+            hitSize = 24f;
+            rotateSpeed = 2f;
+            targetAir = false;
+            health = 7000;
+            armor = 15f;
+            mechFrontSway = 0.6f;
+            ammoType = new PowerAmmoType(1200);
+            constructor = MechUnit::create;
+
+            weapons.add(new Weapon("mechanical-warfare-revisit-anarchy-blaster-equip"){{
+                top = false;
+                y = 15.1f;
+                x = 20f;
+                reload = 80f;
+                recoil = 6f;
+                shootY = 13.25f;
+                shake = 3f;
+                shoot.shots = 2;
+                shoot.shotDelay = 0;
+                ejectEffect = Fx.casing3;
+                shootSound = Sounds.artillery;
+                inaccuracy = 2;
+                bullet = new BasicBulletType(8f, 150){{
+                    shootEffect = Fx.shootBig;
+                    smokeEffect = Fx.shootBigSmoke;
+                    hitEffect = despawnEffect = MVFx.anarchyShellHit;
+                    splashDamage = 100;
+                    splashDamageRadius = 16;
+                    knockback = 0.8f;
+                    lifetime = 50f;
+                    trailWidth = 4;
+                    trailLength = 8;
+                    width = 17f;
+                    height = 22f;
+                    backColor = MVPal.backColorCyan;
+                    frontColor = trailColor = MVPal.frontColorCyan;
                 }};
             }});
         }};

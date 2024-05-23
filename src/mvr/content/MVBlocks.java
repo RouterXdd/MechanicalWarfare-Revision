@@ -21,13 +21,15 @@ import mvr.classes.draw.BarDraw;
 import mvr.graphics.*;
 import mvr.classes.defence.turrets.*;
 
+import static mindustry.content.Items.*;
+import static mvr.content.MVRes.*;
 import static mindustry.type.ItemStack.*;
 public class MVBlocks {
     public static Block
             //environment
             hillBlock, soil, obsidianRocks, obsidian, aluminumOre, ironOre, uraniumOre,
             //crafting
-            scrapCompactor, steelCrucible, oilRefinery, chemicalStation,
+            scrapCompactor, steelCrucible, recycler, oilRefinery, chemicalStation,
             insulatingCompound, APShellAssembler, HEShellAssembler,
             //drills
             chemicalDrill,
@@ -50,26 +52,26 @@ public class MVBlocks {
         obsidianRocks = new StaticWall("obsidian-rocks"){{
             variants = 2;
         }};
-        ironOre = new OreBlock(MVRes.iron){{
+        ironOre = new OreBlock(iron){{
             oreDefault = true;
             oreThreshold = 0.864f;
             oreScale = 24.904762f;
         }};
-        aluminumOre = new OreBlock(MVRes.aluminium){{
+        aluminumOre = new OreBlock(aluminium){{
             oreDefault = true;
             oreThreshold = 0.882f;
             oreScale = 25.380953f;
         }};
-        uraniumOre = new OreBlock(MVRes.uranium){{
+        uraniumOre = new OreBlock(uranium){{
             oreDefault = true;
             oreThreshold = 0.9f;
             oreScale = 25.380953f;
         }};
         scrapCompactor = new GenericCrafter("scrap-compactor"){{
-            requirements(Category.crafting, with(Items.copper, 75, Items.lead, 40,Items.silicon, 25));
+            requirements(Category.crafting, with(copper, 75, lead, 40, silicon, 25));
             liquidCapacity = 60f;
             craftTime = 20f;
-            outputItem = new ItemStack(MVRes.scrapPlate, 1);
+            outputItem = new ItemStack(scrapPlate, 1);
             size = 2;
             health = 210;
             hasPower = true;
@@ -81,14 +83,14 @@ public class MVBlocks {
                     }}
             );
 
-            consumeItem(Items.scrap, 2);
+            consumeItem(scrap, 2);
             consumePower(0.2f);
             //research spore-press
         }};
         steelCrucible = new GenericCrafter("steel-crucible"){{
-            requirements(Category.crafting, with(Items.copper, 80, Items.lead, 60, Items.silicon, 40, MVRes.iron, 20));
+            requirements(Category.crafting, with(copper, 80, lead, 60, silicon, 40, iron, 20));
             craftEffect = Fx.smeltsmoke;
-            outputItem = new ItemStack(MVRes.steel, 2);
+            outputItem = new ItemStack(steel, 2);
             craftTime = 60f;
             size = 2;
             hasPower = true;
@@ -97,15 +99,36 @@ public class MVBlocks {
             ambientSound = Sounds.smelter;
             ambientSoundVolume = 0.07f;
 
-            consumeItems(with(MVRes.iron, 3, Items.coal, 1));
+            consumeItems(with(iron, 3, coal, 1));
             consumePower(1.25f);
             //research scrap-compactor
         }};
-        oilRefinery = new GenericCrafter("oil-refinery"){{
-            requirements(Category.crafting, with(Items.titanium, 80, Items.silicon, 70, Items.metaglass, 70, MVRes.steel, 60));
+        recycler = new Separator("recycler"){{
+            requirements(Category.crafting, with(copper, 60, titanium, 50, silicon, 30, steel, 25, plastanium, 20));
+            results = with(
+                    copper, 5,
+                    lead, 3,
+                    graphite, 2,
+                    iron, 2,
+                    titanium, 2,
+                    silicon, 1,
+                    metaglass, 1,
+                    plastanium, 1
+            );
+            hasPower = true;
+            craftTime = 60f;
+            size = 3;
 
-            outputItem = new ItemStack(MVRes.sulfur, 1);
-            outputLiquid = new LiquidStack(MVRes.gas, 0.1f);
+            consumePower(2f);
+            consumeLiquid(Liquids.slag, 12f / 60f);
+
+            drawer = new DrawMulti(new DrawLiquidTile(), new DrawRegion("-spinner", 3, true), new DrawDefault());
+        }};
+        oilRefinery = new GenericCrafter("oil-refinery"){{
+            requirements(Category.crafting, with(titanium, 80, silicon, 70, metaglass, 70, steel, 60));
+
+            outputItem = new ItemStack(sulfur, 1);
+            outputLiquid = new LiquidStack(gas, 0.1f);
             craftTime = 60f;
             size = 2;
             hasPower = true;
@@ -116,8 +139,8 @@ public class MVBlocks {
             //research coal-centrifuge
         }};
         chemicalStation = new GenericCrafter("chemical-station"){{
-            requirements(Category.crafting, with(MVRes.iron, 80, MVRes.steel, 50, Items.silicon, 60, Items.metaglass, 60));
-            outputLiquid = new LiquidStack(MVRes.acid, 15f / 60f);
+            requirements(Category.crafting, with(iron, 80, steel, 50, silicon, 60, metaglass, 60));
+            outputLiquid = new LiquidStack(acid, 15f / 60f);
             size = 4;
             hasPower = true;
             hasItems = true;
@@ -126,27 +149,27 @@ public class MVBlocks {
             solid = true;
             outputsLiquid = true;
             envEnabled = Env.any;
-            drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawLiquidTile(Liquids.water), new DrawLiquidTile(MVRes.acid){{drawLiquidLight = true;}}, new DrawDefault(), new DrawRegion("-top"));
+            drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawLiquidTile(Liquids.water), new DrawLiquidTile(acid){{drawLiquidLight = true;}}, new DrawDefault(), new DrawRegion("-top"));
             liquidCapacity = 60f;
             craftTime = 60;
-            lightLiquid = MVRes.acid;
+            lightLiquid = acid;
 
             consumePower(1f);
-            consumeItem(MVRes.sulfur, 1);
+            consumeItem(sulfur, 1);
             consumeLiquid(Liquids.water, 15f / 60f);
             //research oil-refinery
         }};
         insulatingCompound = new GenericCrafter("insulating-compound") {{
             requirements(Category.crafting, with(
-                    Items.lead, 75,
-                    Items.titanium, 50,
-                    MVRes.uranium, 25,
-                    Items.surgeAlloy, 50,
-                    Items.plastanium, 30
+                    lead, 75,
+                    titanium, 50,
+                    uranium, 25,
+                    surgeAlloy, 50,
+                    plastanium, 30
             ));
             scaledHealth = 40;
             craftEffect = Fx.smoke;
-            outputItems = with(MVRes.insulatorAlloy, 1);
+            outputItems = with(insulatorAlloy, 1);
             craftTime = 85f;
             size = 2;
             itemCapacity = 10;
@@ -163,13 +186,13 @@ public class MVBlocks {
                     }});
 
             consumePower(4.5f);
-            consumeItems(with(Items.plastanium, 2, Items.surgeAlloy, 1));
+            consumeItems(with(plastanium, 2, surgeAlloy, 1));
             //research steel-crucible
         }};
         APShellAssembler = new GenericCrafter("ap-shell-assembler"){{
-            requirements(Category.crafting, with(MVRes.iron, 120, Items.silicon, 75, Items.titanium, 80, MVRes.uranium, 40, Items.plastanium, 80));
+            requirements(Category.crafting, with(iron, 120, silicon, 75, titanium, 80, uranium, 40, plastanium, 80));
             craftEffect = Fx.producesmoke;
-            outputItem = new ItemStack(MVRes.apShell, 1);
+            outputItem = new ItemStack(apShell, 1);
             craftTime = 60f;
             size = 3;
             hasPower = true;
@@ -179,13 +202,13 @@ public class MVBlocks {
             }}, new DrawRegion("-top"));
 
             consumePower(5f);
-            consumeItems(with(Items.blastCompound, 2, MVRes.uranium, 5, Items.coal, 4));
+            consumeItems(with(blastCompound, 2, uranium, 5, coal, 4));
             //research blast-mixer
         }};
         HEShellAssembler = new GenericCrafter("he-shell-assembler"){{
-            requirements(Category.crafting, with(MVRes.iron, 120, Items.silicon, 75, Items.titanium, 80, MVRes.uranium, 40, Items.plastanium, 80));
+            requirements(Category.crafting, with(iron, 120, silicon, 75, titanium, 80, uranium, 40, plastanium, 80));
             craftEffect = Fx.producesmoke;
-            outputItem = new ItemStack(MVRes.heShell, 1);
+            outputItem = new ItemStack(heShell, 1);
             craftTime = 60f;
             size = 3;
             hasPower = true;
@@ -196,11 +219,11 @@ public class MVBlocks {
             }}, new DrawRegion("-top"));
 
             consumePower(5f);
-            consumeItems(with(Items.blastCompound, 5, MVRes.steel, 2, Items.coal, 4));
+            consumeItems(with(blastCompound, 5, steel, 2, coal, 4));
             //research blast-mixer
         }};
         chemicalDrill = new Drill("chemical-drill"){{
-            requirements(Category.production, with(MVRes.iron, 50, MVRes.steel, 70, Items.silicon, 60, Items.metaglass, 50, Items.titanium, 80));
+            requirements(Category.production, with(iron, 50, steel, 70, silicon, 60, metaglass, 50, titanium, 80));
             drillTime = 270;
             size = 3;
             drawRim = true;
@@ -217,45 +240,45 @@ public class MVBlocks {
             liquidBoostIntensity = 1.8f;
 
             consumePower(2f);
-            consumeLiquid(MVRes.acid, 0.1f);
+            consumeLiquid(acid, 0.1f);
             consumeLiquid(Liquids.cryofluid, 0.2f).boost();
             //research blast-drill
         }};
         steelWall = new Wall("steel-wall"){{
-            requirements(Category.defense, with(MVRes.steel, 6));
+            requirements(Category.defense, with(steel, 6));
             health = 560;
             envDisabled |= Env.scorching;
             //research titanium-wall
         }};
         steelWallLarge = new Wall("steel-wall-large"){{
-            requirements(Category.defense, with(MVRes.steel, 24));
+            requirements(Category.defense, with(steel, 24));
             health = 560 * 4;
             size = 2;
             envDisabled |= Env.scorching;
         }};
         reinforcedWall = new MWWall("reinforced-wall"){{
-            requirements(Category.defense, with(MVRes.iron, 6, Items.surgeAlloy, 4, MVRes.uranium, 3, Items.phaseFabric, 1));
+            requirements(Category.defense, with(iron, 6, surgeAlloy, 4, uranium, 3, phaseFabric, 1));
             health = 1280;
             envDisabled |= Env.scorching;
             repairPower = 0.4f;
             //research surge-wall
         }};
         reinforcedWallLarge = new MWWall("reinforced-wall-large"){{
-            requirements(Category.defense, with(MVRes.iron, 24, Items.surgeAlloy, 16, MVRes.uranium, 12, Items.phaseFabric, 4));
+            requirements(Category.defense, with(iron, 24, surgeAlloy, 16, uranium, 12, phaseFabric, 4));
             health = 1280 * 4;
             envDisabled |= Env.scorching;
             repairPower = 0.4f * 4;
             size = 2;
         }};
         insulatorWall = new InsulatorWall("insulator-wall"){{
-            requirements(Category.defense, with(MVRes.insulatorAlloy, 6));
+            requirements(Category.defense, with(insulatorAlloy, 6));
             health = 1000;
             absorbLasers = true;
             envDisabled |= Env.scorching;
             //research plastanium-wall
         }};
         insulatorWallLarge = new InsulatorWall("insulator-wall-large"){{
-            requirements(Category.defense, with(MVRes.insulatorAlloy, 6));
+            requirements(Category.defense, with(insulatorAlloy, 6));
             health = 1000 * 4;
             size = 2;
             absorbLasers = true;
@@ -264,7 +287,7 @@ public class MVBlocks {
             lightningMultiplier = 30;
         }};
         heatLasor = new TractorBeamTurret("incandescence"){{
-            requirements(Category.turret, with(Items.lead, 160, Items.titanium, 120, Items.silicon, 120, MVRes.steel, 100));
+            requirements(Category.turret, with(lead, 160, titanium, 120, silicon, 120, steel, 100));
 
             hasPower = true;
             targetGround = true;
@@ -283,9 +306,9 @@ public class MVBlocks {
             consumePower(4f);
         }};
         lobber = new ItemTurret("lobber"){{
-            requirements(Category.turret, with(MVRes.scrapPlate, 35, Items.graphite, 20, Items.silicon, 20));
+            requirements(Category.turret, with(scrapPlate, 35, graphite, 20, silicon, 20));
             ammo(
-                    Items.scrap,  new ArtilleryBulletType(4f, 0){{
+                    scrap,  new ArtilleryBulletType(4f, 0){{
                         width = height = 12f;
                         lifetime = 60f;
                         ammoMultiplier = 2;
@@ -303,7 +326,7 @@ public class MVBlocks {
                             drag = 0.1f;
                         }};
                     }},
-                    Items.copper,  new ArtilleryBulletType(3f, 0){{
+                    copper,  new ArtilleryBulletType(3f, 0){{
                         width = height = 13f;
                         lifetime = 80f;
                         ammoMultiplier = 2;
@@ -313,7 +336,7 @@ public class MVBlocks {
                         splashDamage = 50;
                         splashDamageRadius = 16;
                     }},
-                    Items.coal, new ArtilleryBulletType(2.6f, 0){{
+                    coal, new ArtilleryBulletType(2.6f, 0){{
                         width = height = 13f;
                         lifetime = 90f;
                         ammoMultiplier = 2;
@@ -330,7 +353,7 @@ public class MVBlocks {
                         incendAmount = 3;
                         incendSpread = 10;
                     }},
-                    Items.silicon, new ArtilleryBulletType(3f, 0){{
+                    silicon, new ArtilleryBulletType(3f, 0){{
                         width = height = 14f;
                         lifetime = 80f;
                         ammoMultiplier = 2;
@@ -366,37 +389,37 @@ public class MVBlocks {
             //research hail
         }};
         aegis = new BunkerTurret("aegis"){{
-            requirements(Category.turret, with(Items.copper, 50, Items.lead, 50, MVRes.steel, 40));
+            requirements(Category.turret, with(copper, 50, lead, 50, steel, 40));
             ammo(
-                    MVRes.cobblestone,  new BasicBulletType(3.3f, 4){{
+                    cobblestone,  new BasicBulletType(3.3f, 4){{
                         width = 7f;
                         height = 10f;
                         lifetime = 36f;
                         inaccuracy = 9;
                         ammoMultiplier = 2;
                     }},
-                    Items.copper,  new BasicBulletType(3.5f, 7){{
+                    copper,  new BasicBulletType(3.5f, 7){{
                         width = 7f;
                         height = 10f;
                         lifetime = 36f;
                         inaccuracy = 8;
                         ammoMultiplier = 2;
                     }},
-                    MVRes.iron,  new BasicBulletType(3.9f, 10){{
+                    iron,  new BasicBulletType(3.9f, 10){{
                         width = 7f;
                         height = 10f;
                         lifetime = 32f;
                         inaccuracy = 7.5f;
                         ammoMultiplier = 2;
                     }},
-                    Items.thorium,  new BasicBulletType(4.5f, 14){{
+                    thorium,  new BasicBulletType(4.5f, 14){{
                         width = 7f;
                         height = 10f;
                         lifetime = 28f;
                         inaccuracy = 7;
                         ammoMultiplier = 2;
                     }},
-                    MVRes.uranium,  new BasicBulletType(4.8f, 20){{
+                    uranium,  new BasicBulletType(4.8f, 20){{
                         width = 7f;
                         height = 10f;
                         lifetime = 27f;
@@ -421,9 +444,9 @@ public class MVBlocks {
             limitRange();
         }};
         ghost = new ItemTurret("ghost"){{
-            requirements(Category.turret, with(Items.plastanium, 75, MVRes.steel, 100, Items.surgeAlloy, 50, Items.graphite, 150, Items.thorium, 125));
+            requirements(Category.turret, with(plastanium, 75, steel, 100, surgeAlloy, 50, graphite, 150, thorium, 125));
             ammo(
-                    Items.metaglass, new FlakBulletType(18f, 12){{
+                    metaglass, new FlakBulletType(18f, 12){{
                         width = 4f;
                         height = 15f;
                         lifetime = 14f;
@@ -442,7 +465,7 @@ public class MVBlocks {
                             despawnEffect = Fx.none;
                         }};
                     }},
-                    Items.pyratite, new FlakBulletType(16f, 66){{
+                    pyratite, new FlakBulletType(16f, 66){{
                         width = 5f;
                         height = 18f;
                         lifetime = 16f;
@@ -452,7 +475,7 @@ public class MVBlocks {
                         hitEffect = Fx.flakExplosion;
                         despawnEffect = Fx.flakExplosion;
                     }},
-                    Items.blastCompound, new FlakBulletType(15f, 104){{
+                    blastCompound, new FlakBulletType(15f, 104){{
                         width = 4f;
                         height = 18f;
                         lifetime = 17f;
@@ -463,7 +486,7 @@ public class MVBlocks {
                         despawnEffect = Fx.flakExplosion;
                         reloadMultiplier = 0.6f;
                     }},
-                    Items.plastanium, new FlakBulletType(18f, 18){{
+                    plastanium, new FlakBulletType(18f, 18){{
                         width = 5f;
                         height = 18f;
                         lifetime = 14f;
@@ -482,7 +505,7 @@ public class MVBlocks {
                             despawnEffect = Fx.none;
                         }};
                     }},
-                    Items.surgeAlloy, new FlakBulletType(18f, 20){{
+                    surgeAlloy, new FlakBulletType(18f, 20){{
                         width = 5f;
                         height = 18f;
                         lifetime = 14f;
@@ -500,7 +523,7 @@ public class MVBlocks {
                         hitEffect = Fx.flakExplosion;
                         despawnEffect = Fx.lightningShoot;
                     }},
-                    MVRes.heShell, new FlakBulletType(13f, 125){{
+                    heShell, new FlakBulletType(13f, 125){{
                         width = 6f;
                         height = 21f;
                         lifetime = 20f;
@@ -532,9 +555,9 @@ public class MVBlocks {
             //research = swarmer
         }};
         nighthawk = new ItemTurret("nighthawk"){{
-            requirements(Category.turret, with(Items.copper, 180, Items.graphite, 100, Items.titanium, 125, MVRes.iron, 150));
+            requirements(Category.turret, with(copper, 180, graphite, 100, titanium, 125, iron, 150));
             ammo(
-                    Items.graphite, new BasicBulletType(10f, 75){{
+                    graphite, new BasicBulletType(10f, 75){{
                         knockback = 0.8f;
                         lifetime = 50f;
                         width = 12;
@@ -547,7 +570,7 @@ public class MVBlocks {
                         trailColor = heatColor;
                         sprite = "mechanical-warfare-revisit-hvbullet";
                     }},
-                    Items.titanium, new BasicBulletType(12f, 98){{
+                    titanium, new BasicBulletType(12f, 98){{
                         knockback = 0.8f;
                         lifetime = 42f;
                         width = 12;
@@ -562,7 +585,7 @@ public class MVBlocks {
                         trailColor = heatColor;
                         sprite = "mechanical-warfare-revisit-hvbullet";
                     }},
-                    MVRes.apShell, new BasicBulletType(14f, 140){{
+                    apShell, new BasicBulletType(14f, 140){{
                         knockback = 0.8f;
                         lifetime = 36f;
                         width = 12;
@@ -593,7 +616,7 @@ public class MVBlocks {
             //research = salvo
         }};
         voltmeter = new TeslaTurret("voltmeter"){{
-            requirements(Category.turret, with(Items.copper, 250, Items.lead, 225, MVRes.iron, 200, Items.silicon, 225, Items.surgeAlloy, 175));
+            requirements(Category.turret, with(copper, 250, lead, 225, iron, 200, silicon, 225, surgeAlloy, 175));
             shootType = new LightningBulletType(){{
                 damage = 50;
                 lightningLength = 25;
@@ -636,9 +659,9 @@ public class MVBlocks {
             //research incandescence / heatLasor
         }};
         quake = new ItemTurret("quake"){{
-            requirements(Category.turret, with(MVRes.iron, 200, Items.graphite, 450, Items.plastanium, 250, Items.surgeAlloy, 250, MVRes.uranium, 300));
+            requirements(Category.turret, with(iron, 200, graphite, 450, plastanium, 250, surgeAlloy, 250, uranium, 300));
             ammo(
-                    MVRes.heShell, new BasicBulletType(10f, 240){{
+                    heShell, new BasicBulletType(10f, 240){{
                         lifetime = 40f;
                         width = 17;
                         height = 22f;
@@ -655,7 +678,7 @@ public class MVBlocks {
                         trailColor = frontColor;
                         hitSound = Sounds.boom;
                     }},
-                    MVRes.apShell, new BasicBulletType(10f, 2210){{
+                    apShell, new BasicBulletType(10f, 2210){{
                         lifetime = 40f;
                         width = 17;
                         height = 22f;
@@ -689,27 +712,28 @@ public class MVBlocks {
             //research ripple
         }};
         airAlter = new Reconstructor("fly-alter"){{
-            requirements(Category.units, with(Items.copper, 260, Items.lead, 170, Items.silicon, 120, MVRes.iron, 95, MVRes.aluminium, 70));
+            requirements(Category.units, with(copper, 260, lead, 170, silicon, 120, iron, 95, aluminium, 70));
 
             size = 3;
             consumePower(4f);
-            consumeItems(with(Items.silicon, 52, MVRes.iron, 36, MVRes.steel, 20));
+            consumeItems(with(silicon, 52, iron, 36, steel, 20));
 
             constructTime = 60f * 20f;
 
             upgrades.addAll(
                     new UnitType[]{UnitTypes.mono, MVUnitTypes.bullhead},
                     new UnitType[]{UnitTypes.flare, MVUnitTypes.apparition},
-                    new UnitType[]{UnitTypes.dagger, MVUnitTypes.serpent}
+                    new UnitType[]{UnitTypes.dagger, MVUnitTypes.serpent},
+                    new UnitType[]{UnitTypes.nova, MVUnitTypes.bonker}
             );
             //research air-factlory
         }};
         heliPlatform = new Reconstructor("heli-platform"){{
-            requirements(Category.units, with(Items.surgeAlloy, 175, Items.lead, 175, Items.titanium, 325, Items.silicon, 300, MVRes.iron, 200));
+            requirements(Category.units, with(surgeAlloy, 175, lead, 175, titanium, 325, silicon, 300, iron, 200));
 
             size = 4;
             consumePower(5.5f);
-            consumeItems(with(Items.silicon, 70, Items.titanium, 40, MVRes.steel, 35, Items.plastanium, 10));
+            consumeItems(with(silicon, 70, titanium, 40, steel, 35, plastanium, 10));
 
             constructTime = 60f * 60f;
             squareSprite = false;
